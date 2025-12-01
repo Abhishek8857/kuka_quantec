@@ -88,9 +88,9 @@ RUN rosdep install --from-paths src --ignore-src -r -y --skip-keys=warehouse_ros
 RUN source /colcon_ws/install/setup.bash  && \
     colcon build  \
     --symlink-install \
-   --event-handlers desktop_notification- console_cohesion- \
-   --cmake-clean-first \
-   --cmake-args -DCMAKE_BUILD_TYPE=Release 
+    --event-handlers desktop_notification- console_cohesion- \
+    --cmake-clean-first \
+    --cmake-args -DCMAKE_BUILD_TYPE=Release 
 
 # Entry point   
 CMD ["/bin/bash"]
