@@ -66,7 +66,7 @@ def launch_setup(context, *args, **kwargs):
                 [
                     FindPackageShare(f"kr240_r2900_2"),
                     "urdf",
-                    robot_model.perform(context) + ".urdf.xacro",
+                    "kr240_r2900_2" + ".urdf.xacro",
                 ]
             ),
             " ",

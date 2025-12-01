@@ -12,10 +12,10 @@ from launch.substitutions import Command, FindExecutable
 def generate_launch_description():
     # Moveit Config
     moveit_config = (      
-        MoveItConfigsBuilder(robot_name="kr240_r2900_2", package_name="kuka_moveit_config")
+        MoveItConfigsBuilder(robot_name="kr240_r2900_2", package_name="kuka_omnimove_moveit_config")
         .robot_description_semantic(
-            get_package_share_directory("kuka_moveit_config")
-            + "/config/kr240_r2900_2.srdf"
+            get_package_share_directory("kuka_omnimove_moveit_config")
+            + "/config/kuka_with_omnimove.srdf"
         )     
         .robot_description_kinematics(file_path="config/kinematics.yaml")
         .trajectory_execution(file_path="config/moveit_controllers.yaml")
@@ -33,7 +33,7 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare("kr240_r2900_2"),
             "urdf",
-            "kr240_r2900_2.urdf.xacro"
+            "omnimove_with_kr240_r2900_2.urdf.xacro"
         ]),
     ])
 
@@ -58,7 +58,7 @@ def generate_launch_description():
     )
 
     rviz_config_file = PathJoinSubstitution([
-            FindPackageShare("kuka_moveit_config"),
+            FindPackageShare("temp"),
             "config",
             "moveit.rviz"
         ])

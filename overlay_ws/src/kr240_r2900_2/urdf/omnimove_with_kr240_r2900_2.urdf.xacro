@@ -1,9 +1,11 @@
 <?xml version="1.0" ?>
 <robot name="kuka_with_omnimove" xmlns:xacro="http://wiki.ros.org/xacro">
-  <xacro:include filename="$(find kr240_r2900_2)/urdf/kr240_r2900_2_omni.urdf.xacro"/>
+  <xacro:include filename="$(find kr240_r2900_2)/urdf/kr240_r2900_2_macro_omni.xacro"/>
+  <xacro:include filename="$(find kr240_r2900_2)/urdf/kr_quantec_ros2_control_macro.xacro"/>
   <xacro:include filename="$(find kuka_omnimove_e575_support)/urdf/omnimove.xacro"/>
   <xacro:include filename="$(find sick_safetyscanners2)/description/urdf/nanoscan3/nanoscan3_macro.xacro"/>
   <xacro:omnimove prefix="omnimove_"/>
+
   <xacro:omnimove_ros2_control name="omnimove"/>
   <!-- place the omnimove on the world ground plane (omnimove_base is child of world)
        Adjust the origin's z value if the mesh is not grounded at its link frame. -->
@@ -18,6 +20,38 @@
     <child link="base_link"/>
     <origin xyz="0.9 0 0.85" rpy="0 0 0"/> 
   </joint>
+
+  <!-- Read additional arguments  -->
+  <xacro:arg name="driver_version" default="rsi_only"/>
+  <xacro:arg name="mode" default="hardware"/>
+  <xacro:arg name="use_gpio" default="false"/>
+  <xacro:arg name="roundtrip_time" default="0"/>
+  <xacro:arg name="client_ip" default="0.0.0.0"/>
+  <xacro:arg name="client_port" default="59152"/>
+  <xacro:arg name="controller_ip" default="0.0.0.0"/>
+  <xacro:arg name="verify_robot_model" default="true"/>
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="x" default="0.9"/>   <!-- Changed from 0 -->
+  <xacro:arg name="y" default="0"/>
+  <xacro:arg name="z" default="0.85"/>  <!-- Changed from 0 -->
+  <xacro:arg name="roll" default="0"/>
+  <xacro:arg name="pitch" default="0"/>
+  <xacro:arg name="yaw" default="0"/>
+  
+  <xacro:kuka_quantec_ros2_control name="$(arg prefix)kr240_r2900_2" 
+  driver_version="$(arg driver_version)" 
+  client_ip="$(arg client_ip)" 
+  client_port="$(arg client_port)" 
+  controller_ip="$(arg controller_ip)" 
+  prefix="$(arg prefix)" 
+  mode="$(arg mode)" 
+  use_gpio="$(arg use_gpio)" 
+  roundtrip_time="$(arg roundtrip_time)" 
+  verify_robot_model="$(arg verify_robot_model)"/>
+
+  <xacro:kuka_kr240_r2900_2_robot prefix="$(arg prefix)" package_name="kr240_r2900_2">
+    <origin xyz="$(arg x) $(arg y) $(arg z)" rpy="$(arg roll) $(arg pitch) $(arg yaw)"/>
+  </xacro:kuka_kr240_r2900_2_robot>
 
   <!-- Add nanoscan3 sensors at specific locations on omnimove -->
   <!-- Front-right sensor -->
