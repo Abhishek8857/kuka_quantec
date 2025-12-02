@@ -41,9 +41,8 @@ def launch_setup(context, *args, **kwargs):
             PathJoinSubstitution(
                 [
                     FindPackageShare(f"kr240_r2900_2"),
-                    "urdf",
-                    # "kr240_r2900_2" + ".urdf.xacro",
-                    "omnimove_with_kr240_r2900_2" + ".urdf.xacro"
+                    "omni_urdf",
+                    "kr240_r2900_2" + ".urdf.xacro",
                 ]
             ),
             " ",
