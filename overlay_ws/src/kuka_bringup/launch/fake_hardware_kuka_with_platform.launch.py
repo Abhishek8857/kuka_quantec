@@ -47,6 +47,8 @@ def launch_setup(context, *args, **kwargs):
             ),
             " ",
             "mode:=mock",
+            " ",
+            "use:gpio:=false" 
         ]
     )
 
@@ -122,7 +124,7 @@ def launch_setup(context, *args, **kwargs):
     #     ]
     #     return Node(package="controller_manager", executable="spawner", arguments=arg_list)
 
-    def controller_spawner(controller_with_config):
+    def controller_spawner(controller_with_config): 
         args = [controller_with_config[0], "-c", controller_manager_node]
         if controller_with_config[1]:  # only add -p if file exists
             args += ["-p", controller_with_config[1]]
