@@ -72,8 +72,8 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
     colcon build \
     --symlink-install \
     --event-handlers desktop_notification- console_cohesion- \
-   --cmake-clean-first \
-   --cmake-args -DCMAKE_BUILD_TYPE=Release 
+    --cmake-clean-first \
+    --cmake-args -DCMAKE_BUILD_TYPE=Release 
 
 # Copy entrypoint scripts and make them executable
 COPY entrypoint_scripts/ /entrypoint_scripts/
