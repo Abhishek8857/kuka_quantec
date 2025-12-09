@@ -27,7 +27,7 @@ def launch_setup(context, *args, **kwargs):
     dof = LaunchConfiguration("dof")
 
     rviz_config_file = PathJoinSubstitution([
-            FindPackageShare("kuka_moveit_config"),
+            FindPackageShare("kuka_omni_moveit_config"),
             "config",
             "moveit.rviz"
         ])
@@ -56,10 +56,10 @@ def launch_setup(context, *args, **kwargs):
 
     # Create MoveIt config with our full robot description
     moveit_config = (      
-        MoveItConfigsBuilder(robot_name="kr240_r2900_2", package_name="kuka_moveit_config")
+        MoveItConfigsBuilder(robot_name="kr240_r2900_2", package_name="kuka_omni_moveit_config")
         .robot_description_semantic(
-            get_package_share_directory("kuka_moveit_config")
-            + "/config/kr240_r2900_2.srdf"
+            get_package_share_directory("kuka_omni_moveit_config")
+            + "/config/kuka_with_omnimove.srdf"
         )     
         .robot_description_kinematics(file_path="config/kinematics.yaml")
         .trajectory_execution(file_path="config/moveit_controllers.yaml")

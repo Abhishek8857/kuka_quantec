@@ -10,7 +10,7 @@
       </link>
       
       <!-- X axis prismatic joint -->
-      <joint name="${prefix}x_joint" type="prismatic">
+      <!-- <joint name="${prefix}x_joint" type="prismatic">
         <parent link="${prefix}base"/>
         <child link="${prefix}x_link"/>
         <axis xyz="1 0 0"/>
@@ -21,10 +21,10 @@
           <mass value="0.01"/>
           <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
         </inertial>
-      </link>
+      </link> -->
 
       <!-- Y axis prismatic joint -->
-      <joint name="${prefix}y_joint" type="prismatic">
+      <!-- <joint name="${prefix}y_joint" type="prismatic">
         <parent link="${prefix}x_link"/>
         <child link="${prefix}y_link"/>
         <axis xyz="0 1 0"/>
@@ -36,15 +36,15 @@
           <mass value="0.01"/>
           <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
         </inertial>
-      </link>
+      </link> -->
 
       <!-- Z axis rotational joint (rotation) -->
-      <joint name="${prefix}z_joint" type="revolute">
+      <!-- <joint name="${prefix}z_joint" type="revolute">
         <parent link="${prefix}y_link"/>
         <child link="${prefix}platform"/>
         <axis xyz="0 0 1"/>
         <limit lower="-3.14159" upper="3.14159" effort="1000" velocity="1.0"/>
-      </joint>
+      </joint> -->
 
       <link name="${prefix}platform">
         <visual>

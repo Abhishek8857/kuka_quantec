@@ -7,16 +7,10 @@
   <xacro:omnimove_ros2_control name="omnimove"/>
   <!-- place the omnimove on the world ground plane (omnimove_base is child of world)
        Adjust the origin's z value if the mesh is not grounded at its link frame. -->
-  <joint name="omni_to_world" type="fixed">
-    <parent link="world"/>
-    <child link="omnimove_base"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
-
   <joint name="base_to_platform" type="fixed">
     <parent link="omnimove_base"/>
     <child link="omnimove_platform"/>
-    <origin xyz="0 0 0.6" rpy="0 0 0"/> 
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
   </joint>
 
   <!-- Attach KUKA robot to the omnimove platform -->

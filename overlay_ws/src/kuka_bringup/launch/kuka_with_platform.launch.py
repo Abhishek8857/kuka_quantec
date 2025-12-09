@@ -32,7 +32,7 @@ def generate_launch_description():
         " ",
         PathJoinSubstitution([
             FindPackageShare("kr240_r2900_2"),
-            "urdf",
+            "omni_urdf",
             "kr240_r2900_2.urdf.xacro"
         ]),
     ])
@@ -58,7 +58,7 @@ def generate_launch_description():
     )
 
     rviz_config_file = PathJoinSubstitution([
-            FindPackageShare("temp"),
+            FindPackageShare("kuka_omni_moveit_config"),
             "config",
             "moveit.rviz"
         ])

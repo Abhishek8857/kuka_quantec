@@ -137,7 +137,7 @@
       </visual>
     </link>
     <link name="${prefix}tool0"/>
-    <link name="world"/>
+    <!-- <link name="world"/> -->
     <joint name="${prefix}base_link-base" type="fixed">
       <child link="${prefix}base"/>
       <parent link="${prefix}base_link"/>
