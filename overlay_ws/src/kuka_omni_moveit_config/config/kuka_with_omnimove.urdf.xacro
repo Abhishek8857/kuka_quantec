@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="kuka_with_omnimove">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import kuka_with_omnimove urdf file -->
+    <xacro:include filename="$(find kr240_r2900_2)/omni_urdf/kr240_r2900_2.urdf.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="kuka_with_omnimove.ros2_control.xacro" />
+
+
+    <xacro:kuka_with_omnimove_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>
