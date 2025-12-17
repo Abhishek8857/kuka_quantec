@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iputils-ping \
     ros-${ROS_DISTRO}-filters \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
+    ros-${ROS_DISTRO}-rmw-zenoh-cpp \
     ros-${ROS_DISTRO}-ros-gz-sim \
     ros-${ROS_DISTRO}-ros-gz-bridge \
     ros-${ROS_DISTRO}-ros-gz-interfaces \

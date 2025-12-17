@@ -1,55 +1,127 @@
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
-#include <map>
-#include <string>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <vector>
-#include <chrono>
+#include <mutex>
+
+std::vector<geometry_msgs::msg::Pose> pose_queue;
+std::mutex pose_mutex;
+
+void poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+{
+    std::lock_guard<std::mutex> lock(pose_mutex);
+    pose_queue.push_back(msg->pose);
+
+    RCLCPP_INFO(
+        rclcpp::get_logger("pose_listener"),
+        "Received pose (queue size = %zu)",
+        pose_queue.size()
+    );
+}
 
 int main(int argc, char** argv)
 {
-    // Initialize ROS 2
     rclcpp::init(argc, argv);
-    auto node = rclcpp::Node::make_shared("motion_plan_joint_sequence");
+    auto node = rclcpp::Node::make_shared("motion_plan_pose_sequence");
 
-    // Give MoveIt and RViz time to start
+    // Subscriber
+    auto sub = node->create_subscription<geometry_msgs::msg::PoseStamped>(
+        "/target_pose",
+        10,
+        poseCallback
+    );
+
+    // Executor
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    // Give ROS + MoveIt time
     rclcpp::sleep_for(std::chrono::seconds(2));
 
-    // Create MoveGroupInterface for manipulator
     static const std::string PLANNING_GROUP = "manipulator";
     moveit::planning_interface::MoveGroupInterface move_group(node, PLANNING_GROUP);
 
-    // Optional: choose a planner
-    move_group.setPlannerId("RRTConnectkConfigDefault");
+    move_group.setPlannerId("RRTConnect");
+    move_group.setPoseReferenceFrame("base_link");
+    move_group.setPlanningTime(10.0);
+    move_group.setMaxVelocityScalingFactor(0.05);
+    move_group.setMaxAccelerationScalingFactor(0.05);
 
-    // Define multiple joint positions (sequence)
-    std::vector<std::map<std::string, double>> joint_sequence = {
-        {{"joint_1", 0.0}, {"joint_2", -2.0}, {"joint_3", 2.0}, {"joint_4", 0.0}, {"joint_5", 1.5}, {"joint_6", 0.0}},
-        {{"joint_1", 0.5}, {"joint_2", -1.5}, {"joint_3", 1.5}, {"joint_4", 0.0}, {"joint_5", 1.0}, {"joint_6", 0.0}},
-        {{"joint_1", -0.5}, {"joint_2", -2.5}, {"joint_3", 2.0}, {"joint_4", 0.0}, {"joint_5", 1.5}, {"joint_6", 0.0}}
-        // Add more positions as needed
-    };
+    RCLCPP_INFO(node->get_logger(), "Waiting for poses on /target_pose...");
 
-    // Iterate through the sequence
-    for (size_t i = 0; i < joint_sequence.size(); ++i)
+    while (rclcpp::ok())
     {
-        RCLCPP_INFO(node->get_logger(), "Moving to position %zu...", i+1);
-        move_group.setJointValueTarget(joint_sequence[i]);
+        // Handle incoming pose messages
+        executor.spin_some();
 
-        bool success = (move_group.move() == moveit::core::MoveItErrorCode::SUCCESS);
+        geometry_msgs::msg::Pose target_pose;
+        bool has_pose = false;
 
-        if (success)
         {
-            RCLCPP_INFO(node->get_logger(), "Finished position %zu!", i+1);
-            rclcpp::sleep_for(std::chrono::seconds(2));  // short rest between motions
+            std::lock_guard<std::mutex> lock(pose_mutex);
+            if (!pose_queue.empty())
+            {
+                target_pose = pose_queue.front();
+                pose_queue.erase(pose_queue.begin());
+                has_pose = true;
+            }
         }
-        else
+
+        if (!has_pose)
         {
-            RCLCPP_ERROR(node->get_logger(), "Move failed for position %zu!", i+1);
+            rclcpp::sleep_for(std::chrono::milliseconds(100));
+            continue;
         }
+
+        RCLCPP_INFO(
+            node->get_logger(),
+            "Planning to pose: x=%.3f y=%.3f z=%.3f",
+            target_pose.position.x,
+            target_pose.position.y,
+            target_pose.position.z
+        );
+
+        move_group.setPoseTarget(target_pose);
+
+        moveit::planning_interface::MoveGroupInterface::Plan plan;
+        auto plan_result = move_group.plan(plan);
+
+        if (plan_result != moveit::core::MoveItErrorCode::SUCCESS)
+        {
+            RCLCPP_ERROR(node->get_logger(), "Planning failed.");
+            move_group.clearPoseTargets();
+            continue;
+        }
+
+        RCLCPP_INFO(node->get_logger(), "Plan successful!");
+
+        // User confirmation
+        std::cout << "\n>>> PLAN READY\n";
+        std::cout << "Execute this motion? (ENTER = yes, 's' + ENTER = skip)\n";
+
+        std::string input;
+        std::getline(std::cin, input);
+
+        if (input == "s" || input == "S")
+        {
+            RCLCPP_WARN(node->get_logger(), "Execution skipped.");
+            move_group.clearPoseTargets();
+            continue;
+        }
+
+        RCLCPP_INFO(node->get_logger(), "Executing...");
+
+        auto exec_result = move_group.execute(plan);
+        if (exec_result != moveit::core::MoveItErrorCode::SUCCESS)
+        {
+            RCLCPP_ERROR(node->get_logger(), "Execution failed.");
+            move_group.clearPoseTargets();
+            continue;
+        }
+
+        RCLCPP_INFO(node->get_logger(), "Execution finished.");
+        move_group.clearPoseTargets();
     }
-
-
-    RCLCPP_INFO(node->get_logger(), "Finished all positions.");
 
     rclcpp::shutdown();
     return 0;
