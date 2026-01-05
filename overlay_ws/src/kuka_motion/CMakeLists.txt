@@ -15,6 +15,8 @@ find_package(moveit_ros_planning_interface REQUIRED)  # For MoveIt 2
 
 add_executable(motion_plan src/motion_plan.cpp)
 add_executable(motion_test src/motion_test.cpp)
+add_executable(demo_test src/demo_test.cpp)
+
 
 # Link against necessary libraries
 ament_target_dependencies(motion_plan
@@ -29,10 +31,16 @@ ament_target_dependencies(motion_test
   geometry_msgs
 )
 
+# Link against necessary libraries
+ament_target_dependencies(demo_test
+  rclcpp
+  geometry_msgs
+)
 
 install(TARGETS
   motion_plan
   motion_test
+  demo_test
   DESTINATION lib/${PROJECT_NAME}
 )
 

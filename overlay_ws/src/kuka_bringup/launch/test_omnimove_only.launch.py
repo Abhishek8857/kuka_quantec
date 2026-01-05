@@ -24,12 +24,8 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("kr240_r2900_2"), "urdf", "kr240_r2900_2" + ".urdf.xacro"]
+                [FindPackageShare("kr240_r2900_2"), "omni_urdf", "omnimove_only" + ".urdf.xacro"]
             ),
-            " ",
-            "mode:=mock",
-            " ",
-            "use_gpio:=false",
         ]
     )
     robot_description = {"robot_description": robot_description_content}
@@ -56,6 +52,13 @@ def generate_launch_description():
         parameters=[robot_description],
     )
 
+    joint_state_publisher_node = Node(
+        package="joint_state_publisher",
+        executable="joint_state_publisher",
+        name="joint_state_publisher",
+        parameters=[robot_description]
+    )
+    
     # Joint state publisher
     joint_state_publisher_gui = Node(
         package="joint_state_publisher_gui",
@@ -64,4 +67,4 @@ def generate_launch_description():
         output="log",
     )
 
-    return LaunchDescription([robot_state_publisher, rviz_node, joint_state_publisher_gui])
+    return LaunchDescription([robot_state_publisher, rviz_node, joint_state_publisher_gui, joint_state_publisher_node])

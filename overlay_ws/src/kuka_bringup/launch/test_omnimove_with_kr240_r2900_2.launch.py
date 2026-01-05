@@ -36,7 +36,7 @@ def generate_launch_description():
 
     # RViz
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("kuka_resources"), "config", "view_6_axis_urdf.rviz"]
+        [FindPackageShare("kuka_bringup"), "config", "view_6_axis_urdf.rviz"]
     )
     rviz_node = Node(
         package="rviz2",
