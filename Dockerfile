@@ -25,6 +25,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-vcstool \
     python3-rosdep \
     ros-dev-tools \
+    netcat-openbsd \
+    iproute2 \
     iputils-ping \
     ros-${ROS_DISTRO}-filters \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
